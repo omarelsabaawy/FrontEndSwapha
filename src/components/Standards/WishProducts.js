@@ -127,9 +127,9 @@ function WishProducts() {
                                     :
                                     (products.map((product) => (
                                         <Col sm={12} md={6} lg={3} key={product._id}>
-                                            <Card className='CardHome' key={product._id}>
+                                            <Card className='CardHome' style={{ minHeight: '420px', margin: '5px' }} key={product._id}>
                                                 <Card.Header style={{ backgroundColor: 'transparent' }}>
-                                                    <div style={{ maxHeight: 310 }}>
+                                                    <div>
                                                         <Card.Link href={`/product/${product._id}`}>
                                                             <Card.Img style={{ maxHeight: '310px', maxwidth: '250px', borderRadius: '0.3rem' }} variant="top" src={product.imageUrl} alt={product.name} />
                                                         </Card.Link>
@@ -193,34 +193,30 @@ function WishProducts() {
                                 <thead className="text-muted">
                                     <tr>
                                         <th scope="col" width="50%">Product:</th>
-                                        <th scope="col" width="16%">Owned by:</th>
-                                        <th scope="col" width="16%">The user is Similar to you by:</th>
-                                        <th scope="col" width="16%">Item similar to:</th>
+                                        <th scope="col" width="25%">Owned by:</th>
+                                        <th scope="col" width="25%">Product Similar to you by:</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {predictedProducts.map(product =>
-                                        <tr key={product.item_id}>
+                                        <tr key={product.swap_item_id}>
                                             <td>
                                                 <figure className="media">
-                                                    <Link onClick={() => { navigate(`/product/${product.item_id}`) }} style={{ width: '200px' }}>
+                                                    <Link to={`/product/${product.item_id}`} style={{ width: '200px' }}>
                                                         <img src={product.imageUrl} alt={product.item_name} /></Link>
                                                     <figcaption style={{ marginLeft: '10px' }}>
-                                                        <Link style={{ color: 'black' }}>{product.item_name} </Link>
+                                                        <Link to={`/product/${product.item_id}`} style={{ color: 'black' }}>{product.item_name} </Link>
                                                         <p>{product.desc}</p>
                                                     </figcaption>
                                                 </figure>
                                             </td>
                                             <td>
-                                                {product.owner}
+                                                <Link to={`/publicProfile/${product.user_id}`} style={{ color: 'black' }}>{product.owner}</Link>
                                             </td>
                                             <td>
                                                 <div>
                                                     {Math.round(product.similarity * 100)}%
                                                 </div>
-                                            </td>
-                                            <td >
-                                                {product.matched_wish_item}
                                             </td>
                                         </tr>
                                     )}

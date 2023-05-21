@@ -82,7 +82,7 @@ function NoResponsiveness(props) {
                                             <Link to={`/profile/${user._id}`}>your profile</Link>
                                         </div>
                                         <div className="header__top__links">
-                                            <Link to="/inbox">inbox <Badge bg="transparent" style={{ fontSize: '14px' }} >0</Badge> </Link>
+                                            <Link to="/inbox">inbox</Link>
                                         </div>
                                         <div className="header__top__links">
                                             <button onClick={handleLogout} style={{ backgroundColor: "transparent", borderColor: 'transparent' }} ><Link>Logout</Link></button>

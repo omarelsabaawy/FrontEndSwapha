@@ -19,6 +19,7 @@ import SwapEditForm from "./components/Standards/SwapEditForm";
 import Messages from "./components/Standards/Messages";
 import SearchProducts from "./components/Standards/SearchProducts";
 import WishListForm from "./components/Standards/WishListForm";
+import PublicProfile from "./components/Standards/PublicProfile";
 
 function App(props) {
 
@@ -79,6 +80,7 @@ function App(props) {
                         <Route path="/:country/product/:_id" element={<ProductDetails />} />
                         <Route path="/product/:_id" element={<ProductDetails />} />
                         <Route path="/profile/:_id" element={<Profile />} />
+                        <Route path='/publicProfile/:_id' element={<PublicProfile />} />
                         <Route path="/inbox" element={<Messages />} />
                         <Route path="/:country/search/:query" element={<SearchProducts />} />
                         <Route path="*" element={<Error404 />} />
@@ -94,13 +96,13 @@ function App(props) {
                     <NavBar user={""} />
                     <Routes>
                         <Route path="/" element={<HomeScreen />} />
-                        <Route path={`/:${localStorage.getItem('location')}/swap`} element={<SwapScreen />} />
-                        <Route path={`/:${localStorage.getItem('location')}/Buy`} element={<ShopScreen />} />
+                        <Route path="/:country/swap" element={<SwapScreen />} />
+                        <Route path="/:country/buy" element={<ShopScreen />} />
                         <Route path="/aboutUs" element={<AboutUs />} />
                         <Route path="/signIn" element={<SignIn />} />
                         <Route path="/signUp" element={<SignUp />} />
                         <Route path="/contactUs" element={<ContactUs />} />
-                        <Route path={`/:${localStorage.getItem('location')}/product/:_id`} element={<ProductDetails />} />
+                        <Route path="/:country/product/:_id" element={<SignIn />} />
                         <Route path="/:country/search/:query" element={<SearchProducts />} />
                         <Route path="*" element={<Error404 />} />
                     </Routes>

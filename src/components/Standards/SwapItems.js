@@ -31,6 +31,7 @@ const reducer = (state, action) => {
 
 function SwapItems() {
     const params = useParams();
+    console.log(params);
     const [{ loading, products, error }, dispatch] = useReducer(logger(reducer), {
         loading: true, products: [], error: ''
     });

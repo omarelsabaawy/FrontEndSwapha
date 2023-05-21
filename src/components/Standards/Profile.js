@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { Spinner } from 'react-bootstrap';
+import { Button, Col, Row, Spinner } from 'react-bootstrap';
 import ErrorMessage from '../Screens/ErrorMessage';
 import './profile.css'
 
@@ -38,6 +38,9 @@ function Profile() {
 
     const handleChangePassword = (event) => {
         setPasswordValues({ ...passwordValues, [event.target.name]: event.target.value });
+    }
+    const ShowPublicProfile = () => {
+        return navigate(`/publicProfile/${_id}`)
     }
 
     const deleteUser = async () => {
@@ -99,7 +102,25 @@ function Profile() {
                     <div className="col-12">
                         {/* <!-- Page title --> */}
                         <div className="my-5">
-                            <h3>My Profile</h3>
+                            <Row>
+                                <Col>
+                                    <h3>My Profile</h3>
+                                </Col>
+                                <Col>
+                                    <Button
+                                        style={{
+                                            float: 'right',
+                                            width: '200px',
+                                            height: '50px',
+                                            backgroundColor: '#255459',
+                                            borderColor: 'transparent'
+                                        }}
+                                        onClick={() => ShowPublicProfile()}
+                                    >
+                                        Public Profile
+                                    </Button>
+                                </Col>
+                            </Row>
                             <hr />
                         </div>
                         {/* <!-- Form START --> */}

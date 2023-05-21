@@ -100,9 +100,9 @@ function SwapProducts() {
                                     :
                                     (products.map((product) => (
                                         <Col sm={12} md={6} lg={3} key={product._id}>
-                                            <Card className='CardHome' key={product._id}>
+                                            <Card className='CardHome' style={{ minHeight: '420px', margin: '5px' }} key={product._id}>
                                                 <Card.Header style={{ backgroundColor: 'transparent' }}>
-                                                    <div style={{ maxHeight: 310 }}>
+                                                    <div>
                                                         <Card.Link href={`/product/${product._id}`}>
                                                             <Card.Img style={{ maxHeight: '310px', maxwidth: '250px', borderRadius: '0.3rem' }} variant="top" src={product.imageUrl} alt={product.name} />
                                                         </Card.Link>

@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Col, OverlayTrigger, Row, Spinner, Tooltip } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Rating from './Rating';
 import { toast, ToastContainer } from 'react-toastify';
-
+import io from 'socket.io-client'
+var socket;
+const ENDPOINT = "http://localhost:8000"
 function ProductInfo(props) {
     const product = props.product;
     const globalData = JSON.parse(localStorage.getItem('user12345'));
@@ -12,19 +14,63 @@ function ProductInfo(props) {
     const from = user._id;
     const to = product.userId;
     const productId = product._id;
-    const [loading, setLoading] = useState(false);
+    const [loadingSwap, setLoadingSwap] = useState(false);
+    const [loadingBuy, setLoadingBuy] = useState(false);
+    const [socketConnected, setSocketConnected] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+        socket.emit("setup", user);
+        socket.on("connection", () => setSocketConnected(true));
+    }, [user])
 
     const sendSwapRequest = async () => {
-        setLoading(true);
+        setLoadingSwap(true);
         const { data } = await axios.post('/api/notification/sendSwapRequest', {
             from, to, productId
-        })
+        });
+        console.log(data.notification);
         if (data.status === true) {
             toast.success(data.msg, { position: 'bottom-right' });
-            setLoading(false);
+            setLoadingSwap(false);
+            socket.emit("Send Swap Request", data.notification);
         } else {
             toast.error(data.msg, { position: 'bottom-right' });
-            setLoading(false);
+            setLoadingSwap(false);
+        }
+    }
+
+    const sendBuyRequest = async () => {
+        setLoadingBuy(true);
+        const { data } = await axios.post('/api/notification/sendBuyRequest', {
+            from, to, productId
+        })
+        console.log(data.notification);
+        if (data.status === true) {
+            toast.success(data.msg, { position: 'bottom-right' });
+            setLoadingBuy(false);
+            socket.emit("Send Buy Request", data.notification);
+        } else {
+            toast.error(data.msg, { position: 'bottom-right' });
+            setLoadingBuy(false);
+        }
+    }
+
+    const finalizeRequest = async (prodId) => {
+        setLoadingDelete(true);
+        const config = {
+            headers: {
+                Authorization: `Bearer ${globalData.Token}`
+            }
+        }
+        const { data } = await axios.get(`/api/auth/delete/swapList/${prodId}`, config);
+        if (data.status === true) {
+            globalData.currentUser = data.currentUser;
+            localStorage.setItem('user12345', JSON.stringify(globalData));
+            navigate(-1);
+            setLoadingDelete(false);
         }
     }
 
@@ -113,11 +159,17 @@ function ProductInfo(props) {
 
                     <div>
                         <div style={{ paddingTop: 10 }}>
-                            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Send a request to swap this product with its owner.</Tooltip>}>
+                            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">
+                                {product.swap ? "Send a request to swap this product with its owner." : "Sorry This product is not available for swapping"}
+                            </Tooltip>}>
                                 <span className="d-inline-block">
-                                    <Button onClick={sendSwapRequest} style={{ backgroundColor: '#fff', borderColor: '#255459', width: '170px', height: '70px' }}>
+                                    <Button
+                                        onClick={sendSwapRequest}
+                                        style={{ backgroundColor: '#fff', borderColor: '#255459', width: '170px', height: '70px' }}
+                                        disabled={product.swap ? false : true}
+                                    >
                                         <Link style={{ color: '#255459', fontWeight: 'bold' }}>
-                                            {loading ? <Spinner
+                                            {loadingSwap ? <Spinner
                                                 as="span"
                                                 size="sm"
                                                 role="status"
@@ -132,14 +184,51 @@ function ProductInfo(props) {
                             </OverlayTrigger>
                         </div>
                         <div style={{ paddingTop: 10 }}>
-                            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Send a request to Buy this product from its owner.</Tooltip>}>
+                            <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">
+                                {product.buy ? "Send a request to Buy this product from its owner." : "Sorry This product is not available to buy"}
+                            </Tooltip>}>
                                 <span className="d-inline-block">
-                                    <Button style={{ backgroundColor: '#fff', borderColor: '#255459', width: '170px', height: '70px' }}>
-                                        <Link style={{ color: '#255459', fontWeight: 'bold' }}>Buy Request</Link>
+                                    <Button
+                                        onClick={sendBuyRequest}
+                                        style={{ backgroundColor: '#fff', borderColor: '#255459', width: '170px', height: '70px' }}
+                                        disabled={product.buy ? false : true}
+                                    >
+                                        <Link style={{ color: '#255459', fontWeight: 'bold' }}>
+                                            {loadingBuy ? <Spinner
+                                                as="span"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                animation="border" />
+                                                :
+                                                "Buy Request"
+                                            }</Link>
                                     </Button>
                                 </span>
                             </OverlayTrigger>
                         </div>
+                        {user._id === product.userId && (
+                            <div style={{ paddingTop: 10 }}>
+                                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Delete the product When you find the best user to swap the product with.</Tooltip>}>
+                                    <span className="d-inline-block">
+                                        <Button
+                                            onClick={() => finalizeRequest(product._id)}
+                                            style={{ backgroundColor: '#fff', borderColor: '#255459', width: '170px', height: '70px' }}>
+                                            <Link style={{ color: '#255459', fontWeight: 'bold' }}>
+                                                {loadingDelete ? <Spinner
+                                                    as="span"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                    animation="border" />
+                                                    :
+                                                    "Finalize Request"
+                                                }</Link>
+                                        </Button>
+                                    </span>
+                                </OverlayTrigger>
+                            </div>
+                        )}
                     </div>
                 </Col>
             </Row>

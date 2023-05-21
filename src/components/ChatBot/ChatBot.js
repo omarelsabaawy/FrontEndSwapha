@@ -57,7 +57,7 @@ function ChatBot() {
                 let msg1 = { name: "User", message: text1 }
                 this.messages.push(msg1);
 
-                fetch('http://localhost:5000/ai/predict', {
+                fetch('http://localhost:5001/ai/predict', {
                     method: 'POST',
                     body: JSON.stringify({ message: text1 }),
                     mode: 'cors',

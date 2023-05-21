@@ -53,7 +53,7 @@ function Responsiveness(props) {
                                 <Link to="/profile">your profile</Link>
                             </div>
                             <div class="offcanvas__links">
-                                <Link to="/messages">inbox <Badge bg="transparent" style={{ fontSize: '14px', color: 'black' }} >0</Badge> </Link>
+                                <Link to="/inbox">inbox</Link>
                             </div>
                             <div class="offcanvas__links">
                                 <button onClick={handleLogout} style={{ backgroundColor: "transparent", borderColor: 'transparent', color: 'black' }} ><Link>Logout</Link></button>
